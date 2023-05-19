@@ -1,0 +1,58 @@
+@import url("font.css");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    [type='text'],
+      [type='email'],
+      [type='url'],
+      [type='password'],
+      [type='number'],
+      [type='date'],
+      [type='datetime-local'],
+      [type='month'],
+      [type='search'],
+      [type='tel'],
+      [type='time'],
+      [type='week'],
+      [multiple],
+      textarea,
+      select{
+        @apply w-full text-slate-800 rounded-md focus:outline-none focus:bg-yellow-50 focus:ring focus:ring-sky-200 border border-solid border-gray-300 px-3 py-1;
+      }
+      [type="checkbox"],
+      [type="radio"]{
+        @apply rounded border-2 focus:ring focus:ring-sky-500 border-solid border-gray-300;
+      }
+      button{
+        @apply bg-slate-800 my-4 text-white rounded-lg py-1 hover:bg-white hover:text-slate-800 border border-slate-800 transition-all ease-in-out duration-500;
+      }
+}
+
+
+
+*{
+    @apply p-0 m-0 box-border font-[ShabnamFD];
+}
+html{
+    @apply min-h-screen;
+}
+body{
+   @apply bg-gray-200 text-white p-0 m-0 font-[ShabnamFD] relative overflow-x-hidden min-h-screen; 
+}
+a{
+    @apply no-underline;
+}
+:where(.css-dev-only-do-not-override-htwhyh).ant-form-item .ant-form-item-label >label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before{
+    content: "";
+}
+:where(.css-dev-only-do-not-override-htwhyh).ant-form-item .ant-form-item-label >label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::after{
+    display: inline-block;
+    margin-inline-end: 4px;
+    color: #ff4d4f;
+    font-size: 14px;
+    font-family: SimSun,sans-serif;
+    line-height: 1;
+    content: "*";
+}
