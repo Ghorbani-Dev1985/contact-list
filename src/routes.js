@@ -1,5 +1,5 @@
 import AboutUsPage from "./pages/AboutUsPage";
-import HomePage from "./pages/HomePage";
+import AddContact from "./pages/AddContact";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import BlogPage from "./pages/BlogPage";
