@@ -13,11 +13,11 @@ const ContactList = ({contacts , onDelete}) => {
     return ( 
           <>
           <AddNewContactBtn />
-               <div className="w-full flex justify-center items-center flex-col">
-                <div className="overflow-x-auto">
+              
+                <div className="overflow-x-auto max-w-xs md:max-w-full p-2">
                   <div className="py-2 inline-block">
                     <div className="overflow-hidden rounded-lg">
-                 <table className="table-auto">
+                 <table className="table-auto min-w-full">
                 <thead className="bg-slate-800 text-white border-b">
                   <tr>
                   <th
@@ -54,25 +54,25 @@ const ContactList = ({contacts , onDelete}) => {
                       scope="col"
                       className="text-sm font-medium border border-slate-500 px-6 py-4 text-center"
                       >
+                       ویرایش
+                    </th>
+                    <th
+                      scope="col"
+                      className="text-sm font-medium border border-slate-500 px-6 py-4 text-center"
+                      >
                       حذف
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                     {contacts.map((contact) => {
-                       
-                        return(
-                          <>
-                         <Contact contact={contact} onDelete={onDelete}/>
-                    </>
-                    )
+                        return(<Contact contact={contact} onDelete={onDelete}/>)
                   })}
                 </tbody>
               </table>
               </div>
             </div>
           </div>
-        </div>
      </>
      );
     }

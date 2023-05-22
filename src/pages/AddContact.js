@@ -25,8 +25,6 @@ const AddContact = ({AddContactHandler , history}) => {
     if(!contact.phoneNumber) toast.error( "لطفا شماره موبایل را وارد نمایید");
     else {
       AddContactHandler(contact);
-      toast.success( "لیست جدید به درستی افزوده شد");
-      Navigate('/');
       setContact({
       firstName: "",
       lastName: "",
