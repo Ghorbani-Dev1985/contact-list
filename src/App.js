@@ -8,11 +8,12 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ContactList from './Components/ContactList/ContactList';
 import Swal from 'sweetalert2';
+import ContactDetail from './Components/ContactDetail/ContactDetail';
 
 const App = () => {
  const [contacts , setContacts] = useState([]);
  const AddContactHandler = (contact)=> {
-  setContacts([...contacts, {id: Math.ceil(Math.random() * 100000000) , ...contact}]);
+  setContacts([...contacts, {id: new Date().getTime() , ...contact}]);
 }
  const deleteContactHandler = (id) => {
 
@@ -60,6 +61,7 @@ const App = () => {
     position="top-center"
     closeOnClick
     rtl={true}
+    autoClose={2000}
     pauseOnFocusLoss
     draggable
     pauseOnHover
@@ -68,7 +70,7 @@ const App = () => {
       <Routes>
         <Route path='/' element={ <ContactList contacts={contacts} onDelete={deleteContactHandler}/>}/>
         <Route path='/AddContact' element={<AddContact AddContactHandler={AddContactHandler} contacts={contacts} onDelete={deleteContactHandler} />} />
-        
+        <Route path='/user/:id' element={<ContactDetail />} />
         <Route path='/*' element={<NotFound />} />
         </Routes>
     </Layout>

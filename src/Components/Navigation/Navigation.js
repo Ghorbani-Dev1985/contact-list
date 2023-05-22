@@ -1,12 +1,6 @@
 import { NavLink, useParams } from "react-router-dom";
 
-const navItems = [
-  {name: "صفحه اصلی" , to: "/", exact: true},
-  {name: "درباره ما" , to: "/aboutUs"},
-  {name: "مطالب خواندنی" , to: "/blogs"},
-  {name: "پست ها" , to: "/post"},
-  {name: "حساب کاربری" , to: "/profile"},
-]
+
 
 const Navigation = ({text}) => {
   const params = useParams();
