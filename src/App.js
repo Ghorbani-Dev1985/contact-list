@@ -13,6 +13,7 @@ import getContacts from './services/getContactsService';
 import deleteContact from './services/deleteContactService';
 import addContact from './services/addContactService';
 import EditContact from './Components/EditContact/EditContact';
+import updateContact from './services/updateContactService';
 
 const App = () => {
  const [contacts , setContacts] = useState([]);
@@ -22,12 +23,23 @@ const App = () => {
    const {data} = await addContact(contact);
    setContacts([...contacts, data]);
    Navigate('/');
-   toast.success( "درخواست مورد نظر با موفقیت انجام شد");
+   toast.success( "کاربر جدید با موفقیت به لیست اضافه گردید");
   } catch (error) {
     toast.error( "خطا در برقراری ارتباط با سرور");
   }
 }
 
+const EditContactHandler = async (contact , id) => {
+  try {
+    await updateContact(id , contact);
+   const {data} = await getContacts();
+   setContacts(data);
+   Navigate('/');
+   toast.success( "ویرایش با موفقیت انجام شد");
+  } catch (error) {
+    toast.error( "خطا در برقراری ارتباط با سرور");
+  }
+}
 
  const deleteContactHandler = async (id) => {
    
@@ -92,7 +104,7 @@ const App = () => {
         <Route path='/' element={ <ContactList contacts={contacts} onDelete={deleteContactHandler}/>}/>
         <Route path='/AddContact' element={<AddContact AddContactHandler={AddContactHandler} contacts={contacts} onDelete={deleteContactHandler} />} />
         <Route path='/user/:id' element={<ContactDetail />} />
-        <Route path='/edit/:id' element={<EditContact AddContactHandler={AddContactHandler} />} />
+        <Route path='/edit/:id' element={<EditContact editContactHandler={EditContactHandler} />} />
         <Route path='/*' element={<NotFound />} />
         </Routes>
     </Layout>

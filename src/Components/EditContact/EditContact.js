@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import getSingleContact from "../../services/getSingleContactService";
 
-const EditContact = ({AddContactHandler}) => {
+const EditContact = ({editContactHandler}) => {
    const {id} = useParams();
     let Navigate = useNavigate();
     const [contact, setContact] = useState({
@@ -25,7 +25,7 @@ const EditContact = ({AddContactHandler}) => {
       if(!contact.lastName) toast.error( "لطفا نام خانوادگی را وارد نمایید");
       if(!contact.phoneNumber) toast.error( "لطفا شماره موبایل را وارد نمایید");
       else {
-            AddContactHandler(contact);
+        editContactHandler(contact , id);
             setContact({
             firstName: "",
             lastName: "",
