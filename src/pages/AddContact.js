@@ -4,7 +4,8 @@ import { toast } from "react-toastify";
 import { BiBookAdd } from "react-icons/bi";
 import { BiListOl } from "react-icons/bi";
 import { Link, useNavigate } from "react-router-dom";
-const AddContact = ({AddContactHandler , history}) => {
+import addContact from "../services/addContactService";
+const AddContact = () => {
   let Navigate = useNavigate();
   const [contact, setContact] = useState({
     firstName: "",
@@ -18,13 +19,20 @@ const AddContact = ({AddContactHandler , history}) => {
   const AddContactChangeHandler = (e) => {
     setContact({ ...contact, [e.target.name]: e.target.value });
   };
-  const submitForm = (e) => {
+
+  const submitForm = async (e) => {
     e.preventDefault();
     if(!contact.firstName) toast.error( "لطفا نام را وارد نمایید");
     if(!contact.lastName) toast.error( "لطفا نام خانوادگی را وارد نمایید");
     if(!contact.phoneNumber) toast.error( "لطفا شماره موبایل را وارد نمایید");
-    else {
-      AddContactHandler(contact);
+    else {   
+      try {
+           await addContact(contact);
+           Navigate('/');
+           toast.success( "کاربر جدید با موفقیت به لیست اضافه گردید");
+          } catch (error) {
+            toast.error( "خطا در برقراری ارتباط با سرور");
+          }
       setContact({
       firstName: "",
       lastName: "",
@@ -36,6 +44,7 @@ const AddContact = ({AddContactHandler , history}) => {
     })
     }
   };
+   
 
   return (
     <>

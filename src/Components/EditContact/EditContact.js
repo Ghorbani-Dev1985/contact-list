@@ -3,8 +3,10 @@ import { BiEditAlt, BiListOl } from "react-icons/bi";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import getSingleContact from "../../services/getSingleContactService";
+import getContacts from "../../services/getContactsService";
+import updateContact from "../../services/updateContactService";
 
-const EditContact = ({editContactHandler}) => {
+const EditContact = () => {
    const {id} = useParams();
     let Navigate = useNavigate();
     const [contact, setContact] = useState({
@@ -19,13 +21,22 @@ const EditContact = ({editContactHandler}) => {
     const AddContactChangeHandler = (e) => {
       setContact({ ...contact, [e.target.name]: e.target.value });
     };
-    const submitForm = (e) => {
+
+    const submitForm = async (e) => {
       e.preventDefault();
       if(!contact.firstName) toast.error( "لطفا نام را وارد نمایید");
       if(!contact.lastName) toast.error( "لطفا نام خانوادگی را وارد نمایید");
       if(!contact.phoneNumber) toast.error( "لطفا شماره موبایل را وارد نمایید");
       else {
-        editContactHandler(contact , id);
+        // editContactHandler(contact , id);
+        try {
+          await updateContact(id , contact);
+          await getContacts();
+           Navigate('/');
+          toast.success( "ویرایش با موفقیت انجام شد");
+        } catch (error) {
+              toast.error( "خطا در برقراری ارتباط با سرور");
+        }
             setContact({
             firstName: "",
             lastName: "",
