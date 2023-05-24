@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import Loading from "../Loading/Loading";
 import deleteContact from "../../services/deleteContactService";
 import Swal from "sweetalert2";
+import { all } from "axios";
 const ContactList = (props) => {
   const [contacts , setContacts] = useState([]);
   const [allContacts , setAllContacts] = useState([]);
@@ -21,7 +22,7 @@ const ContactList = (props) => {
     } catch (error) {
       toast.error( "خطا در برقراری ارتباط با سرور");
     }
-  } , [contacts]);
+  } , [contacts.whenToUpdateProp]);
 
   const deleteContactHandler = async (id) => {
    
@@ -40,7 +41,7 @@ const ContactList = (props) => {
           const filterdContacts = contacts.filter(contact => contact.id !== id);
           setContacts(filterdContacts);
           Swal.fire({
-            title: 'حذف با موفقت انجام شد',
+            title: 'حذف با موفقیت انجام شد',
              type: 'success',
              icon: 'success',
              timer: 2000,
@@ -55,7 +56,7 @@ const ContactList = (props) => {
     }
    }
 
-    if(contacts.length === 0)  { 
+    if(allContacts.length === 0)  { 
       return (
         <>
         <AddNewContactBtn />
@@ -85,52 +86,53 @@ const ContactList = (props) => {
                   <div className="py-2 inline-block">
                     <div className="overflow-hidden rounded-lg">
                  <table className="table-auto min-w-full">
-                <thead className="bg-slate-800 text-white border-b">
-                  <tr>
+                 <thead className="bg-slate-800 text-white border-b">
+                <tr>
+                <th
+                    scope="col"
+                    className="text-sm font-medium border border-slate-500 px-2 py-4 text-center"
+                    >
+                    تصویر
+                  </th>
                   <th
-                      scope="col"
-                      className="text-sm font-medium border border-slate-500 px-2 py-4 text-center"
-                      >
-                      تصویر
-                    </th>
-                    <th
-                      scope="col"
-                      className="text-sm font-medium border border-slate-500 px-6 py-4 text-center"
-                      >
-                      نام
-                    </th>
-                    <th
-                      scope="col"
-                      className="text-sm font-medium border border-slate-500 px-6 py-4 text-center"
-                      >
-                      نام خانوادگی
-                    </th>
-                    <th
-                      scope="col"
-                      className="text-sm font-medium border border-slate-500 px-6 py-4 text-center"
-                      >
-                      شماره موبایل
-                    </th>
-                     <th
-                      scope="col"
-                      className="text-sm font-medium border border-slate-500 px-2 py-4 text-center"
-                      >
-                       جزییات
-                    </th>
-                    <th
-                      scope="col"
-                      className="text-sm font-medium border border-slate-500 px-2 py-4 text-center"
-                      >
-                       ویرایش
-                    </th>
-                    <th
-                      scope="col"
-                      className="text-sm font-medium border border-slate-500 px-2 py-4 text-center"
-                      >
-                      حذف
-                    </th>
-                  </tr>
-                </thead>
+                    scope="col"
+                    className="text-sm font-medium border border-slate-500 px-6 py-4 text-center"
+                    >
+                    نام
+                  </th>
+                  <th
+                    scope="col"
+                    className="text-sm font-medium border border-slate-500 px-6 py-4 text-center"
+                    >
+                    نام خانوادگی
+                  </th>
+                  <th
+                    scope="col"
+                    className="text-sm font-medium border border-slate-500 px-6 py-4 text-center"
+                    >
+                    شماره موبایل
+                  </th>
+                   <th
+                    scope="col"
+                    className="text-sm font-medium border border-slate-500 px-2 py-4 text-center"
+                    >
+                     جزییات
+                  </th>
+                  <th
+                    scope="col"
+                    className="text-sm font-medium border border-slate-500 px-2 py-4 text-center"
+                    >
+                     ویرایش
+                  </th>
+                  <th
+                    scope="col"
+                    className="text-sm font-medium border border-slate-500 px-2 py-4 text-center"
+                    >
+                    حذف
+                  </th>
+                </tr>
+              </thead>
+            
                 <tbody>
                     { contacts.map((contact) => {
                         return(<Contact key={contact.id} contact={contact} onDelete={deleteContactHandler}/>)

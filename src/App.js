@@ -22,7 +22,7 @@ const App = () => {
     } catch (error) {
       toast.error("خطا در برقراری ارتباط با سرور");
     }
-  }, [contacts]);
+  }, [contacts.whenToUpdateProp]);
 
   return (
     <>
