@@ -5,159 +5,166 @@ import { toast } from "react-toastify";
 import getSingleContact from "../../services/getSingleContactService";
 import getContacts from "../../services/getContactsService";
 import updateContact from "../../services/updateContactService";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import Input from "../../Common/Input";
+import TextArea from "../../Common/TextArea";
+
+//? Formik
+const initialValues = {
+  firstName: "",
+  lastName: "",
+  job: "",
+  phoneNumber: "",
+  cellPhone: "",
+  email: "",
+  address: "",
+};
+
+const validationSchema = Yup.object({
+  firstName: Yup.string()
+    .required("ورود نام الزامی می باشد")
+    .min(3, "حداقل ۳ کاراکتر وارد نمایید"),
+  lastName: Yup.string()
+    .required("ورود نام خانوادگی الزامی می باشد")
+    .min(5, "حداقل ۵ کاراکتر وارد نمایید"),
+  job: Yup.string().min(3, "حداقل ۳ کاراکتر وارد نمایید"),
+  phoneNumber: Yup.string()
+    .required("ورود شماره موبایل الزامی می باشد")
+    .matches(/^[0-9]{11}$/, "شماره موبایل را به درستی وارد نمایید")
+    .nullable(),
+  cellPhone: Yup.string()
+    .required("ورود تلفن ثابت الزامی می باشد")
+    .matches(
+      /^0[0-9]{2,}[0-9]{7,}$/,
+      "شماره تلفن را به درستی همراه کد شهرستان وارد نمایید"
+    )
+    .nullable(),
+  email: Yup.string().email("ایمیل وارد شده اشتباه است"),
+  address: Yup.string()
+    .required("ورود آدرس الزامی می باشد")
+    .min(20, "حداقل ۲۰ کاراکتر وارد نمایید"),
+});
 
 const EditContact = () => {
-   const {id} = useParams();
-    let Navigate = useNavigate();
-    const [contact, setContact] = useState({
-      firstName: "",
-      lastName: "",
-      job: "",
-      phoneNumber: "",
-      cellPhone: "",
-      email: "",
-      address: "",
-    });
-    const AddContactChangeHandler = (e) => {
-      setContact({ ...contact, [e.target.name]: e.target.value });
-    };
+  const { id } = useParams();
+  let Navigate = useNavigate();
+  const [formValues, setFormValues] = useState(null);
+  const onSubmit = async (values) => {
+    try {
+      await updateContact(id, values);
+      await getContacts();
+      Navigate("/");
+      toast.success("ویرایش با موفقیت انجام شد");
+    } catch (error) {
+      toast.error("خطا در برقراری ارتباط با سرور");
+    }
+  };
 
-    const submitForm = async (e) => {
-      e.preventDefault();
-      if(!contact.firstName) toast.error( "لطفا نام را وارد نمایید");
-      if(!contact.lastName) toast.error( "لطفا نام خانوادگی را وارد نمایید");
-      if(!contact.phoneNumber) toast.error( "لطفا شماره موبایل را وارد نمایید");
-      else {
-        // editContactHandler(contact , id);
-        try {
-          await updateContact(id , contact);
-          await getContacts();
-           Navigate('/');
-          toast.success( "ویرایش با موفقیت انجام شد");
-        } catch (error) {
-              toast.error( "خطا در برقراری ارتباط با سرور");
-        }
-            setContact({
-            firstName: "",
-            lastName: "",
-            job: "",
-            phoneNumber: "",
-            cellPhone: "",
-            email: "",
-            address: "",
-          }) 
+  const formik = useFormik({
+    initialValues: formValues || initialValues,
+    onSubmit,
+    validationSchema,
+    validateOnMount: true,
+    enableReinitialize: true,
+  });
+
+  useEffect(() => {
+    const localFetch = async () => {
+      try {
+        const { data } = await getSingleContact(id);
+        setFormValues(data);
+      } catch (error) {
+        toast.error("خطا در برقراری ارتباط با سرور");
       }
     };
-    useEffect(() => {
-       const localFetch = async () => {
-            try {
-              const {data} = await getSingleContact(id);
-              setContact({firstName : data.firstName, lastName: data.lastName, job: data.job, phoneNumber : data.phoneNumber , cellPhone : data.cellPhone, email : data.email , address : data.address});
-            } catch (error) {
-                toast.error( "خطا در برقراری ارتباط با سرور");  
-            }
-        }
-        localFetch();
-    }, []);
+    localFetch();
+  }, []);
 
-    return ( 
-      
-          <>
-            <section className="w-full max-w-lg flex justify-between items-center">
-            <div className="w-full flex items-center max-w-lg mb-4 ">
-              <BiEditAlt className="ml-2 text-lg text-orange-500"/>
-             <h1 className="font-bold text-lg bg-slate-300 px-3 py-1 rounded-lg">  ویرایش</h1>
-            </div>
-              <div className="w-full flex justify-end items-center">
-                <BiListOl className="ml-2 text-3xl text-orange-500"/>
-                <Link to="/" className="flex justify-center items-center">
-                <h1 className="font-bold text-lg bg-slate-300 px-3 py-1 rounded-lg">  مشاهده لیست</h1>
-                </Link>
-              </div>
-            </section>
-      
-              <form onSubmit={submitForm} className="w-full flex max-w-lg bg-white p-4 mb-4 rounded-lg flex-col">
-              <label className="my-2" htmlFor="firstName">
-                 نام <span className="text-rose-500">*</span>
-               </label>
-               <input
-                 onChange={AddContactChangeHandler}
-                 type="text"
-                 name="firstName"
-                 id="firstName"
-                 value={contact.firstName}
-                 placeholder="لطفا نام را وارد نمایید."
-               />
-               <label className="my-2" htmlFor="lastName">
-                 نام خانوادگی <span className="text-rose-500">*</span>
-               </label>
-               <input
-                 onChange={AddContactChangeHandler}
-                 type="text"
-                 name="lastName"
-                 id="lastName"
-                 value={contact.lastName}
-                 placeholder="لطفا نام خانوادگی را وارد نمایید."
-               />
-               <label className="my-2" htmlFor="job">
-                 شغل{" "}
-               </label>
-               <input
-                 onChange={AddContactChangeHandler}
-                 type="text"
-                 name="job"
-                 id="job"
-                 value={contact.job}
-                 placeholder="لطفا شغل را وارد نمایید."
-               />
-               <label className="my-2" htmlFor="phoneNumber">
-                 شماره موبایل <span className="text-rose-500">*</span>
-               </label>
-               <input
-                 onChange={AddContactChangeHandler}
-                 type="text"
-                 name="phoneNumber"
-                 id="phoneNumber"
-                 value={contact.phoneNumber}
-                 placeholder="لطفا شماره موبایل را وارد نمایید."
-               />
-               <label className="my-2" htmlFor="cellPhone">
-                 تلفن ثابت
-               </label>
-               <input
-                 onChange={AddContactChangeHandler}
-                 type="text"
-                 name="cellPhone"
-                 id="cellPhone"
-                 value={contact.cellPhone}
-                 placeholder="لطفا تلفن ثابت را وارد نمایید."
-               />
-               <label className="my-2" htmlFor="email">
-                 ایمیل{" "}
-               </label>
-               <input
-                 onChange={AddContactChangeHandler}
-                 type="text"
-                 name="email"
-                 id="email"
-                 value={contact.email}
-                 placeholder="لطفا ایمیل را وارد نمایید."
-               />
-               <label className="my-2" htmlFor="address">
-                 آدرس{" "}
-               </label>
-               <textarea
-               onChange={AddContactChangeHandler}
-                 name="address"
-                 id="address"
-                 value={contact.address}
-                 placeholder="لطفا آدرس را وارد نمایید."
-               ></textarea>
-               <button type="submit" className="w-full">ثبت ویرایش</button>
-              </form>
-         
-          </>
-     );
-}
- 
+  return (
+    <>
+      <section className="w-full max-w-lg flex justify-between items-center">
+        <div className="w-full flex items-center max-w-lg mb-4 ">
+          <BiEditAlt className="ml-2 text-lg text-orange-500" />
+          <h1 className="font-bold text-lg bg-slate-300 px-3 py-1 rounded-lg">
+            {" "}
+            ویرایش
+          </h1>
+        </div>
+        <div className="w-full flex justify-end items-center">
+          <BiListOl className="ml-2 text-3xl text-orange-500" />
+          <Link to="/" className="flex justify-center items-center">
+            <h1 className="font-bold text-lg bg-slate-300 px-3 py-1 rounded-lg">
+              {" "}
+              مشاهده لیست
+            </h1>
+          </Link>
+        </div>
+      </section>
+
+      <form
+        onSubmit={formik.handleSubmit}
+        className="w-full flex max-w-lg bg-white p-4 mb-4 rounded-lg flex-col"
+      >
+        <Input
+          label="نام"
+          name="firstName"
+          formik={formik}
+          placeholder="لطفا نام را وارد نمایید"
+          value="firstName"
+        />
+        <Input
+          label=" نام خانوادگی "
+          name="lastName"
+          formik={formik}
+          placeholder="لطفا  نام خانوادگی را وارد نمایید"
+          value="lastName"
+        />
+        <Input
+          label="شغل "
+          name="job"
+          formik={formik}
+          placeholder="لطفا شغل را وارد نمایید"
+          value="job"
+        />
+        <Input
+          label="شماره موبایل  "
+          name="phoneNumber"
+          formik={formik}
+          placeholder="لطفا شماره موبایل را وارد نمایید"
+          value="phoneNumber"
+        />
+        <Input
+          label=" تلفن ثابت "
+          name="cellPhone"
+          formik={formik}
+          placeholder="لطفا تلفن ثابت را وارد نمایید"
+          value="cellPhone"
+        />
+        <Input
+          label="ایمیل "
+          name="email"
+          formik={formik}
+          placeholder="لطفا ایمیل را وارد نمایید"
+          value="email"
+        />
+        <TextArea
+          label="آدرس کامل "
+          name="address"
+          formik={formik}
+          placeholder="لطفا آدرس خود را وارد نمایید"
+          value="address"
+        />
+        <button
+          type="submit"
+          disabled={!formik.isValid}
+          className="w-full disabled:opacity-30"
+        >
+          ثبت ویرایش
+        </button>
+      </form>
+    </>
+  );
+};
+
 export default EditContact;
